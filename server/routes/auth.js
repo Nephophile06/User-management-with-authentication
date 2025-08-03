@@ -6,15 +6,12 @@ const { pool } = require('../database-sqlite');
 
 const router = express.Router();
 
-// Registration endpoint
 router.post('/register', [
-  // Validate input data
   body('name').notEmpty().withMessage('Name is required'),
   body('email').isEmail().withMessage('Valid email is required'),
   body('password').notEmpty().withMessage('Password is required')
 ], async (req, res) => {
   try {
-    // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -22,10 +19,8 @@ router.post('/register', [
 
     const { name, email, password } = req.body;
 
-    // Hash the password for security
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert new user (database will handle email uniqueness with unique index)
     const result = await pool.query(
       'INSERT INTO users (name, email, password) VALUES (?, ?, ?) RETURNING id, name, email, status, registration_time',
       [name, email, hashedPassword]
@@ -33,7 +28,6 @@ router.post('/register', [
 
     const user = result.rows[0];
 
-    // Create JWT token
     const token = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET || 'your-secret-key',
@@ -55,7 +49,6 @@ router.post('/register', [
   } catch (error) {
     console.error('Registration error:', error);
     
-    // Handle duplicate email error (from unique index) - SQLite error code
     if (error.message && error.message.includes('UNIQUE constraint failed')) {
       return res.status(400).json({ message: 'Email already exists' });
     }
@@ -64,7 +57,6 @@ router.post('/register', [
   }
 });
 
-// Login endpoint
 router.post('/login', [
   body('email').isEmail().withMessage('Valid email is required'),
   body('password').notEmpty().withMessage('Password is required')
@@ -77,7 +69,6 @@ router.post('/login', [
 
     const { email, password } = req.body;
 
-    // Find user by email
     const result = await pool.query(
       'SELECT * FROM users WHERE email = ?',
       [email]
@@ -89,24 +80,20 @@ router.post('/login', [
 
     const user = result.rows[0];
 
-    // Check if user is blocked
     if (user.status === 'blocked') {
       return res.status(403).json({ message: 'Account is blocked' });
     }
 
-    // Check password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Update last login time
     await pool.query(
       'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?',
       [user.id]
     );
 
-    // Create JWT token
     const token = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET || 'your-secret-key',

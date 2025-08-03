@@ -4,10 +4,8 @@ const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Get all users (sorted by last login time - REQUIREMENT #3)
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    // Get users sorted by last login time (newest first)
     const result = await pool.query(`
       SELECT id, name, email, status, last_login, registration_time
       FROM users 
@@ -24,7 +22,6 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
-// Block users
 router.patch('/block', authenticateToken, async (req, res) => {
   try {
     const { userIds } = req.body;
@@ -33,7 +30,6 @@ router.patch('/block', authenticateToken, async (req, res) => {
       return res.status(400).json({ message: 'User IDs array is required' });
     }
 
-    // Block multiple users
     const placeholders = userIds.map(() => '?').join(',');
     const result = await pool.query(
       `UPDATE users SET status = ? WHERE id IN (${placeholders}) RETURNING id, name, email, status`,
@@ -51,7 +47,6 @@ router.patch('/block', authenticateToken, async (req, res) => {
   }
 });
 
-// Unblock users
 router.patch('/unblock', authenticateToken, async (req, res) => {
   try {
     const { userIds } = req.body;
@@ -60,7 +55,6 @@ router.patch('/unblock', authenticateToken, async (req, res) => {
       return res.status(400).json({ message: 'User IDs array is required' });
     }
 
-    // Unblock multiple users
     const placeholders = userIds.map(() => '?').join(',');
     const result = await pool.query(
       `UPDATE users SET status = ? WHERE id IN (${placeholders}) RETURNING id, name, email, status`,
@@ -78,7 +72,6 @@ router.patch('/unblock', authenticateToken, async (req, res) => {
   }
 });
 
-// Delete users
 router.delete('/delete', authenticateToken, async (req, res) => {
   try {
     const { userIds } = req.body;
@@ -87,14 +80,12 @@ router.delete('/delete', authenticateToken, async (req, res) => {
       return res.status(400).json({ message: 'User IDs array is required' });
     }
 
-    // Get user info before deletion
     const placeholders = userIds.map(() => '?').join(',');
     const usersToDelete = await pool.query(
       `SELECT id, name, email FROM users WHERE id IN (${placeholders})`,
       [...userIds]
     );
 
-    // Delete multiple users
     await pool.query(
       `DELETE FROM users WHERE id IN (${placeholders})`,
       [...userIds]
