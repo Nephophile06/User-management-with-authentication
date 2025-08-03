@@ -1,47 +1,49 @@
-/* Custom styles for User Management Application */
+/* Simple, clean styles for User Management Application */
 
-/* Dashboard styling */
+/* Basic dashboard styling */
 .dashboard-container {
   padding: 20px;
   background-color: #f8f9fa;
   min-height: 100vh;
 }
 
+/* Simple header styling */
 .dashboard-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
   padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .dashboard-title {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  color: #333;
 }
 
 .dashboard-subtitle {
-  font-size: 1.1rem;
-  opacity: 0.9;
+  font-size: 1rem;
+  color: #6c757d;
 }
 
-/* User table styling */
+/* Simple card styling */
 .user-table-card {
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border: none;
-  overflow: hidden;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dee2e6;
 }
 
 .user-table-card .card-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  color: #333;
+  padding: 15px 20px;
 }
 
+/* Basic table styling */
 .user-table {
   margin: 0;
 }
@@ -58,81 +60,74 @@
   border-bottom: 1px solid #dee2e6;
 }
 
-/* Button styling */
+/* Simple button styling */
 .action-buttons {
   margin-bottom: 20px;
 }
 
 .btn-custom {
-  border-radius: 25px;
-  padding: 10px 20px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.btn-custom:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Status badges */
-.status-badge {
-  border-radius: 20px;
+  border-radius: 4px;
   padding: 8px 16px;
   font-weight: 500;
 }
 
-/* Login/Register forms */
+/* Simple status badges */
+.status-badge {
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-weight: 500;
+}
+
+/* Simple login/register forms */
 .auth-container {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-color: #f8f9fa;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
 }
 
 .auth-card {
-  border-radius: 20px;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  border: none;
-  overflow: hidden;
-  max-width: 450px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #dee2e6;
+  max-width: 400px;
   width: 100%;
 }
 
 .auth-card .card-body {
-  padding: 40px;
+  padding: 30px;
 }
 
 .auth-title {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: bold;
   color: #333;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
-/* Form styling */
+/* Simple form styling */
 .form-control {
-  border-radius: 10px;
-  border: 2px solid #e9ecef;
-  padding: 12px 15px;
-  transition: all 0.3s ease;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  padding: 10px 12px;
 }
 
 .form-control:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
   .dashboard-title {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
   
   .auth-card .card-body {
-    padding: 30px 20px;
+    padding: 20px;
   }
   
   .action-buttons {
@@ -145,26 +140,7 @@
   }
 }
 
-/* Animation for status changes */
+/* Simple animation for status changes */
 .status-transition {
-  transition: all 0.3s ease;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #667eea;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #5a6fd8;
+  transition: all 0.2s ease;
 } 

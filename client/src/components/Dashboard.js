@@ -77,7 +77,7 @@ const Dashboard = () => {
                 </div>
                 <div className="d-flex gap-2">
                   <Button 
-                    variant="outline-light" 
+                    variant="outline-primary" 
                     onClick={handleRefresh}
                     disabled={refreshing}
                     className="btn-custom"
@@ -91,7 +91,7 @@ const Dashboard = () => {
                       'Refresh'
                     )}
                   </Button>
-                  <Button variant="outline-light" onClick={handleLogout} className="btn-custom">
+                  <Button variant="outline-danger" onClick={handleLogout} className="btn-custom">
                     Logout
                   </Button>
                 </div>
