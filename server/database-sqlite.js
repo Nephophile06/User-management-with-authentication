@@ -5,17 +5,14 @@ const dbPath = path.join(__dirname, 'user_management.db');
 
 const initializeDatabase = async () => {
   return new Promise((resolve, reject) => {
-    console.log('🔧 Setting up SQLite database...');
     
     const db = new sqlite3.Database(dbPath, (err) => {
       if (err) {
-        console.error('❌ Database connection failed:', err);
+        console.error('Database connection failed:', err);
         reject(err);
         return;
       }
-      
-      console.log('✅ Connected to SQLite database');
-      
+            
       db.run(`
         CREATE TABLE IF NOT EXISTS users (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,21 +25,16 @@ const initializeDatabase = async () => {
         )
       `, (err) => {
         if (err) {
-          console.error('❌ Failed to create users table:', err);
+          console.error('Failed to create users table:', err);
           reject(err);
           return;
         }
         
-        console.log('✅ Users table created successfully');
-        console.log('✅ Unique constraint on email field');
-        
         db.close((err) => {
           if (err) {
-            console.error('❌ Failed to close database:', err);
             reject(err);
             return;
           }
-          console.log('✅ Database setup complete!');
           resolve();
         });
       });

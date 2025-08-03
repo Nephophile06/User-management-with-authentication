@@ -11,7 +11,6 @@ const pool = new Pool({
 
 const initializeDatabase = async () => {
   try {
-    console.log('🔧 Setting up database...');
     
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
@@ -29,12 +28,9 @@ const initializeDatabase = async () => {
       CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_unique 
       ON users (email)
     `);
-
-    console.log('✅ Database setup complete!');
-    console.log('✅ Unique index created on email field');
     
   } catch (error) {
-    console.error('❌ Database setup failed:', error);
+    console.error('Database setup failed:', error);
     throw error;
   }
 };
