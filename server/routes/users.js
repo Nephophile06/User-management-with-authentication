@@ -9,7 +9,7 @@ router.get('/', authenticateToken, async (req, res) => {
     const result = await pool.query(`
       SELECT id, name, email, status, last_login, registration_time
       FROM users 
-      ORDER BY last_login DESC NULLS LAST, registration_time DESC
+      ORDER BY last_login DESC NULLS LAST, registration_time ASC
     `);
 
     res.json({
