@@ -4,11 +4,9 @@ import { toast } from 'react-toastify';
 import { usersAPI } from '../services/api';
 
 const UserTable = ({ users, onUsersUpdate }) => {
-  // State for selected users (REQUIREMENT #4 - Multiple Selection)
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Handle select all checkbox (REQUIREMENT #4)
   const handleSelectAll = (checked) => {
     if (checked) {
       setSelectedUsers(users.map(user => user.id));
@@ -17,7 +15,6 @@ const UserTable = ({ users, onUsersUpdate }) => {
     }
   };
 
-  // Handle individual user selection (REQUIREMENT #4)
   const handleUserSelection = (userId, checked) => {
     if (checked) {
       setSelectedUsers([...selectedUsers, userId]);
@@ -26,10 +23,8 @@ const UserTable = ({ users, onUsersUpdate }) => {
     }
   };
 
-  // Check if all users are selected
   const isAllSelected = users.length > 0 && selectedUsers.length === users.length;
 
-  // Block selected users
   const handleBlockUsers = async () => {
     if (selectedUsers.length === 0) {
       toast.warning('Please select users to block');
@@ -49,7 +44,6 @@ const UserTable = ({ users, onUsersUpdate }) => {
     }
   };
 
-  // Unblock selected users
   const handleUnblockUsers = async () => {
     if (selectedUsers.length === 0) {
       toast.warning('Please select users to unblock');
@@ -69,7 +63,6 @@ const UserTable = ({ users, onUsersUpdate }) => {
     }
   };
 
-  // Delete selected users
   const handleDeleteUsers = async () => {
     if (selectedUsers.length === 0) {
       toast.warning('Please select users to delete');
@@ -93,7 +86,6 @@ const UserTable = ({ users, onUsersUpdate }) => {
     }
   };
 
-  // Format date for display
   const formatDate = (dateString) => {
     if (!dateString) return 'Never';
     return new Date(dateString).toLocaleString();
@@ -101,7 +93,7 @@ const UserTable = ({ users, onUsersUpdate }) => {
 
   return (
     <div>
-      {/* Toolbar with action buttons (REQUIREMENT #2) */}
+      {/* Toolbar with action buttons */}
       <div className="action-buttons d-flex gap-2">
         <Button 
           variant="warning" 
@@ -141,12 +133,12 @@ const UserTable = ({ users, onUsersUpdate }) => {
         </OverlayTrigger>
       </div>
 
-      {/* User Table (REQUIREMENT #2) */}
+      {/* User Table */}
       <Table striped bordered hover responsive className="user-table">
         <thead>
           <tr>
             <th>
-              {/* Select All Checkbox (REQUIREMENT #4) */}
+              {/* Select All Checkbox */}
               <input
                 type="checkbox"
                 checked={isAllSelected}
@@ -165,7 +157,7 @@ const UserTable = ({ users, onUsersUpdate }) => {
           {users.map((user) => (
             <tr key={user.id}>
               <td>
-                {/* Individual User Checkbox (REQUIREMENT #4) */}
+                {/* Individual User Checkbox */}
                 <input
                   type="checkbox"
                   checked={selectedUsers.includes(user.id)}

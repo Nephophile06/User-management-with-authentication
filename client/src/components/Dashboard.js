@@ -7,7 +7,6 @@ import { useAuth } from '../contexts/AuthContext';
 import UserTable from './UserTable';
 
 const Dashboard = () => {
-  // State for users data
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -15,7 +14,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  // Fetch users from API
   const fetchUsers = async () => {
     try {
       const response = await usersAPI.getUsers();
@@ -26,19 +24,16 @@ const Dashboard = () => {
     }
   };
 
-  // Load users on component mount
   useEffect(() => {
     fetchUsers().finally(() => setLoading(false));
   }, []);
 
-  // Handle logout
   const handleLogout = () => {
     logout();
     navigate('/login');
     toast.success('Logged out successfully');
   };
 
-  // Handle refresh users
   const handleRefresh = async () => {
     setRefreshing(true);
     await fetchUsers();
@@ -46,7 +41,6 @@ const Dashboard = () => {
     toast.success('Users refreshed');
   };
 
-  // Handle users update (after block/unblock/delete)
   const handleUsersUpdate = () => {
     fetchUsers();
   };

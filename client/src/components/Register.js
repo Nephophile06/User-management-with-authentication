@@ -6,7 +6,6 @@ import { authAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 
 const Register = () => {
-  // State for form data
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,7 +17,6 @@ const Register = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // Handle input changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -26,17 +24,14 @@ const Register = () => {
     });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
     try {
-      // Call registration API
       const response = await authAPI.register(formData);
       
-      // Registration successful - auto login
       login(response.user, response.token);
       toast.success('Registration successful!');
       navigate('/dashboard');
