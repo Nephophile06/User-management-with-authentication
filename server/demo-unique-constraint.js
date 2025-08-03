@@ -14,7 +14,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
   
   console.log('✅ Connected to SQLite database');
   
-  // Show the table structure to prove unique constraint exists
   console.log('\n📋 Table Structure:');
   db.all("PRAGMA table_info(users)", (err, rows) => {
     if (err) {
@@ -28,7 +27,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
       }
     });
     
-    // Show unique constraints
     console.log('\n🔍 Unique Constraints:');
     db.all("SELECT name FROM sqlite_master WHERE type='index' AND sql LIKE '%UNIQUE%'", (err, rows) => {
       if (err) {
@@ -44,13 +42,11 @@ const db = new sqlite3.Database(dbPath, (err) => {
         console.log('✅ Unique constraint exists on email column (implicit)');
       }
       
-      // Demonstrate database-level constraint
       console.log('\n🧪 DATABASE-LEVEL CONSTRAINT TEST:');
       console.log('Attempting to insert duplicate email...');
       
       const testEmail = 'demo@example.com';
       
-      // First insert
       db.run('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', 
         ['Test User 1', testEmail, 'hashedpassword'], function(err) {
         if (err) {
@@ -58,7 +54,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
         } else {
           console.log('✅ First insert successful (ID:', this.lastID, ')');
           
-          // Try to insert same email again - THIS SHOULD FAIL AT DATABASE LEVEL
           console.log('\n🔄 Attempting second insert with same email...');
           db.run('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', 
             ['Test User 2', testEmail, 'hashedpassword'], function(err) {
@@ -70,7 +65,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
               console.log('❌ Second insert should have failed but succeeded');
             }
             
-            // Clean up test data
             db.run('DELETE FROM users WHERE email = ?', [testEmail], (err) => {
               if (err) {
                 console.log('⚠️  Could not clean up test data:', err.message);

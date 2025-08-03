@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-// Import our modules
 const { initializeDatabase } = require('./database-sqlite');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
@@ -10,28 +9,22 @@ const userRoutes = require('./routes/users');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors()); // Allow requests from frontend
-app.use(express.json()); // Parse JSON request bodies
+app.use(cors()); 
+app.use(express.json()); 
 
-// Routes
-app.use('/api/auth', authRoutes); // Authentication routes (login/register)
-app.use('/api/users', userRoutes); // User management routes
+app.use('/api/auth', authRoutes); 
+app.use('/api/users', userRoutes); 
 
-// Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running' });
 });
 
-// Initialize database and start server
 const startServer = async () => {
   try {
     console.log('🚀 Starting User Management Server...');
     
-    // Set up database tables and unique index
     await initializeDatabase();
     
-    // Start the server
     app.listen(PORT, () => {
       console.log(`✅ Server running on port ${PORT}`);
       console.log(`🌐 API available at http://localhost:${PORT}/api`);
@@ -44,5 +37,4 @@ const startServer = async () => {
   }
 };
 
-// Start the server
 startServer(); 

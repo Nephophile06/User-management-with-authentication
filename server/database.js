@@ -1,7 +1,6 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Create a connection pool to PostgreSQL database
 const pool = new Pool({
   user: process.env.DB_USER || 'postgres',
   host: process.env.DB_HOST || 'localhost',
@@ -10,12 +9,10 @@ const pool = new Pool({
   port: parseInt(process.env.DB_PORT || '5432'),
 });
 
-// Initialize database tables and create unique index (REQUIREMENT #1)
 const initializeDatabase = async () => {
   try {
     console.log('🔧 Setting up database...');
     
-    // Create users table with unique index on email
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -28,7 +25,6 @@ const initializeDatabase = async () => {
       )
     `);
 
-    // Create unique index on email field (REQUIREMENT #1)
     await pool.query(`
       CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email_unique 
       ON users (email)
