@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// Create a context for authentication
 const AuthContext = createContext();
 
-// Custom hook to use authentication context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
@@ -12,15 +10,12 @@ export const useAuth = () => {
   return context;
 };
 
-// Authentication provider component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
 
-  // Check if user is authenticated
   const isAuthenticated = !!token && !!user;
 
-  // Load user data from localStorage on app start
   useEffect(() => {
     const savedToken = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
@@ -31,7 +26,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Login function
   const login = (userData, userToken) => {
     setUser(userData);
     setToken(userToken);
@@ -39,7 +33,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('user', JSON.stringify(userData));
   };
 
-  // Logout function
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -47,7 +40,6 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
   };
 
-  // Context value
   const value = {
     user,
     token,
