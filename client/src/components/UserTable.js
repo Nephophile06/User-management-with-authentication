@@ -102,11 +102,12 @@ const UserTable = ({ users, onUsersUpdate }) => {
   return (
     <div>
       {/* Toolbar with action buttons (REQUIREMENT #2) */}
-      <div className="mb-3 d-flex gap-2">
+      <div className="action-buttons d-flex gap-2">
         <Button 
           variant="warning" 
           onClick={handleBlockUsers} 
           disabled={loading || selectedUsers.length === 0}
+          className="btn-custom"
         >
           Block ({selectedUsers.length})
         </Button>
@@ -119,6 +120,7 @@ const UserTable = ({ users, onUsersUpdate }) => {
             variant="success" 
             onClick={handleUnblockUsers} 
             disabled={loading || selectedUsers.length === 0}
+            className="btn-custom"
           >
             <i className="bi bi-unlock"></i> Unblock
           </Button>
@@ -132,6 +134,7 @@ const UserTable = ({ users, onUsersUpdate }) => {
             variant="danger" 
             onClick={handleDeleteUsers} 
             disabled={loading || selectedUsers.length === 0}
+            className="btn-custom"
           >
             <i className="bi bi-trash"></i> Delete
           </Button>
@@ -139,7 +142,7 @@ const UserTable = ({ users, onUsersUpdate }) => {
       </div>
 
       {/* User Table (REQUIREMENT #2) */}
-      <Table striped bordered hover responsive>
+      <Table striped bordered hover responsive className="user-table">
         <thead>
           <tr>
             <th>
@@ -173,7 +176,7 @@ const UserTable = ({ users, onUsersUpdate }) => {
               <td>{user.name}</td>
               <td>{user.email}</td>
               <td>
-                <Badge bg={user.status === 'active' ? 'success' : 'danger'}>
+                <Badge bg={user.status === 'active' ? 'success' : 'danger'} className="status-badge status-transition">
                   {user.status}
                 </Badge>
               </td>

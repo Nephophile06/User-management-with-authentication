@@ -62,57 +62,62 @@ const Dashboard = () => {
   }
 
   return (
-    <Container fluid className="py-4">
-      {/* Header */}
-      <Row className="mb-4">
-        <Col>
-          <div className="d-flex justify-content-between align-items-center">
-            <div>
-              <h1>User Management Dashboard</h1>
-              <p className="text-muted">
-                Welcome, {user?.name}! ({user?.email})
-              </p>
+    <div className="dashboard-container">
+      <Container fluid>
+        {/* Header */}
+        <Row className="mb-4">
+          <Col>
+            <div className="dashboard-header">
+              <div className="d-flex justify-content-between align-items-center">
+                <div>
+                  <h1 className="dashboard-title">User Management Dashboard</h1>
+                  <p className="dashboard-subtitle">
+                    Welcome, {user?.name}! ({user?.email})
+                  </p>
+                </div>
+                <div className="d-flex gap-2">
+                  <Button 
+                    variant="outline-light" 
+                    onClick={handleRefresh}
+                    disabled={refreshing}
+                    className="btn-custom"
+                  >
+                    {refreshing ? (
+                      <>
+                        <Spinner animation="border" size="sm" className="me-2" />
+                        Refreshing...
+                      </>
+                    ) : (
+                      'Refresh'
+                    )}
+                  </Button>
+                  <Button variant="outline-light" onClick={handleLogout} className="btn-custom">
+                    Logout
+                  </Button>
+                </div>
+              </div>
             </div>
-            <div className="d-flex gap-2">
-              <Button 
-                variant="outline-primary" 
-                onClick={handleRefresh}
-                disabled={refreshing}
-              >
-                {refreshing ? (
-                  <>
-                    <Spinner animation="border" size="sm" className="me-2" />
-                    Refreshing...
-                  </>
-                ) : (
-                  'Refresh'
-                )}
-              </Button>
-              <Button variant="outline-danger" onClick={handleLogout}>
-                Logout
-              </Button>
-            </div>
-          </div>
-        </Col>
-      </Row>
+          </Col>
+        </Row>
 
-      {/* Main Content */}
-      <Row>
-        <Col>
-          <Card>
-            <Card.Header>
-              <h5 className="mb-0">Users ({users.length})</h5>
-            </Card.Header>
-            <Card.Body>
-              <UserTable 
-                users={users} 
-                onUsersUpdate={handleUsersUpdate}
-              />
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+        {/* Main Content */}
+        <Row>
+          <Col>
+            <Card className="user-table-card">
+              <Card.Header>
+                <h5 className="mb-0">Users ({users.length})</h5>
+              </Card.Header>
+              <Card.Body>
+                <UserTable 
+                  users={users} 
+                  onUsersUpdate={handleUsersUpdate}
+                />
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   );
 };
 

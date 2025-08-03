@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Button, Card, Container, Alert } from 'react-bootstrap';
+import { Form, Button, Card, Alert } from 'react-bootstrap';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { authAPI } from '../services/api';
@@ -51,11 +51,11 @@ const Register = () => {
   };
 
   return (
-    <Container className="d-flex align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
-      <div style={{ maxWidth: '400px', width: '100%' }}>
-        <Card>
+    <div className="auth-container">
+      <div style={{ maxWidth: '450px', width: '100%' }}>
+        <Card className="auth-card">
           <Card.Body>
-            <h2 className="text-center mb-4">Register</h2>
+            <h2 className="auth-title">Register</h2>
             
             {error && <Alert variant="danger">{error}</Alert>}
             
@@ -111,7 +111,7 @@ const Register = () => {
           Already have an account? <Link to="/login">Login here</Link>
         </div>
       </div>
-    </Container>
+    </div>
   );
 };
 
