@@ -84,13 +84,13 @@ console.log('This demonstrates that the unique constraint is enforced at the DAT
         await client.query('DELETE FROM users WHERE email = $1', [testEmail]);
         console.log('Test data cleaned up.');
         
-        // Release the client back to the pool
         client.release();
         console.log('\nConnection released.');
     }
     
-    // Close all connections in the pool
     await pool.end();
     console.log('Pool has ended.');
   }
-})();
+})
+
+();
