@@ -25,8 +25,8 @@ const startServer = async () => {
     
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
-      console.log(`API available at http://localhost:${PORT}/api`);
-      console.log(`Health check: http://localhost:${PORT}/api/health`);
+      console.log(`API available at https://user-management-app-ustj.onrender.com/api`);
+      console.log(`Health check: https://user-management-app-ustj.onrender.com/api/health`);
     });
     
   } catch (error) {
