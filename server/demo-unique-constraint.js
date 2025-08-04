@@ -1,82 +1,112 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
+// Use the 'pg' library for PostgreSQL
+const { Pool } = require('pg');
 
-const dbPath = path.join(__dirname, 'user_management.db');
+// --- ⚠️ Configuration ---
+// IMPORTANT: Replace these placeholder values with your actual database credentials.
+const pool = new Pool({
+  user: 'postgres',       // e.g., 'postgres'
+  host: 'localhost',
+  database: 'user_management',  // e.g., 'task4db'
+  password: 'tushu',       // e.g., 'admin123'
+  port: 5432,
+});
 
-console.log('DATABASE-LEVEL UNIQUE CONSTRAINT DEMONSTRATION\n');
+console.log('DATABASE-LEVEL UNIQUE CONSTRAINT DEMONSTRATION (PostgreSQL)\n');
 console.log('This demonstrates that the unique constraint is enforced at the DATABASE level, not application level.\n');
 
-const db = new sqlite3.Database(dbPath, (err) => {
-  if (err) {
-    console.error('Database connection failed:', err);
-    return;
-  }
+// Use an async IIFE (Immediately Invoked Function Expression) to use await
+(async () => {
+  let client;
   
-  console.log('Connected to SQLite database');
-  
-  console.log('\nTable Structure:');
-  db.all("PRAGMA table_info(users)", (err, rows) => {
-    if (err) {
-      console.error('Error getting table info:', err);
-      return;
+  // ✅ FIX: Define testEmail here so it's available in both the try and finally blocks.
+  const testEmail = 'demo@example.com';
+
+  try {
+    // A client is an active connection from the pool.
+    client = await pool.connect();
+    console.log('Connected to PostgreSQL database');
+
+    // --- PostgreSQL uses the information_schema for introspection ---
+    console.log('\nTable Structure (email column):');
+    const tableInfoRes = await client.query(
+      `SELECT column_name, data_type, is_nullable 
+       FROM information_schema.columns 
+       WHERE table_schema = 'public' AND table_name = 'users' AND column_name = 'email'`
+    );
+    
+    if (tableInfoRes.rows.length > 0) {
+      const emailCol = tableInfoRes.rows[0];
+      console.log(`Email column: ${emailCol.column_name} (${emailCol.data_type}) - NOT NULL: ${emailCol.is_nullable === 'NO'}`);
+    } else {
+        console.log('Email column not found in users table.');
     }
     
-    rows.forEach(row => {
-      if (row.name === 'email') {
-        console.log(`Email column: ${row.name} (${row.type}) - NOT NULL: ${row.notnull}, UNIQUE: ${row.pk === 0 && row.notnull === 1 ? 'YES' : 'NO'}`);
-      }
-    });
-    
     console.log('\nUnique Constraints:');
-    db.all("SELECT name FROM sqlite_master WHERE type='index' AND sql LIKE '%UNIQUE%'", (err, rows) => {
-      if (err) {
-        console.error('Error getting unique indexes:', err);
-        return;
-      }
-      
-      if (rows.length > 0) {
-        rows.forEach(row => {
-          console.log(`Unique index found: ${row.name}`);
-        });
-      } else {
-        console.log('Unique constraint exists on email column (implicit)');
-      }
-      
-      console.log('\nDATABASE-LEVEL CONSTRAINT TEST:');
-      console.log('Attempting to insert duplicate email...');
-      
-      const testEmail = 'demo@example.com';
-      
-      db.run('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', 
-        ['Test User 1', testEmail, 'hashedpassword'], function(err) {
-        if (err) {
-          console.log('First insert failed:', err.message);
+    // ✅ FIX: Improved query to reliably find unique constraints and indexes.
+    const constraintRes = await client.query(
+      `SELECT indexname as constraint_name
+       FROM pg_indexes
+       WHERE schemaname = 'public' AND tablename = 'users' AND indexdef LIKE '%UNIQUE%'`
+    );
+    
+    if (constraintRes.rows.length > 0) {
+      console.log(`Unique constraint found: ${constraintRes.rows[0].constraint_name}`);
+    } else {
+      console.log('No UNIQUE constraint found for the users table.');
+    }
+
+    console.log('\nDATABASE-LEVEL CONSTRAINT TEST:');
+    
+    // Cleanup any old test data before starting the test
+    await client.query('DELETE FROM users WHERE email = $1', [testEmail]);
+
+    // --- First Insert ---
+    console.log('Attempting to insert a new user...');
+    const firstInsertRes = await client.query(
+      'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id',
+      ['Test User 1', testEmail, 'hashedpassword']
+    );
+    console.log('First insert successful (ID:', firstInsertRes.rows[0].id, ')');
+    
+    // --- Second (Failing) Insert ---
+    console.log('\nAttempting second insert with the same email...');
+    try {
+        await client.query(
+            'INSERT INTO users (name, email, password) VALUES ($1, $2, $3)',
+            ['Test User 2', testEmail, 'hashedpassword']
+        );
+        // This line should NOT be reached
+        console.log('Second insert should have failed but succeeded. Constraint might be missing.');
+    } catch (err) {
+        // PostgreSQL throws a specific error code for unique violations
+        if (err.code === '23505') { // 23505 is the error code for unique_violation
+            console.log('✅ DATABASE-LEVEL CONSTRAINT WORKING!');
+            console.log('Error Code:', err.code);
+            console.log('Error Message:', err.message);
+            console.log('This error was thrown by PostgreSQL, not by application code!');
         } else {
-          console.log('First insert successful (ID:', this.lastID, ')');
-          
-          console.log('\nAttempting second insert with same email...');
-          db.run('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', 
-            ['Test User 2', testEmail, 'hashedpassword'], function(err) {
-            if (err) {
-              console.log('DATABASE-LEVEL CONSTRAINT WORKING!');
-              console.log('Error:', err.message);
-              console.log('This error was thrown by SQLite, not by application code!');
-            } else {
-              console.log('Second insert should have failed but succeeded');
-            }
-            
-            db.run('DELETE FROM users WHERE email = ?', [testEmail], (err) => {
-              if (err) {
-                console.log('Could not clean up test data:', err.message);
-              } else {
-                console.log('Test data cleaned up');
-              }
-              
-              db.close();
-            });
-          });
+            // Handle other potential errors
+            console.error('An unexpected error occurred during the second insert:', err);
         }
-      });
-    });
-  });
-}); 
+    }
+
+  } catch (err) {
+    console.error('An error occurred during the demonstration:', err);
+  } finally {
+    // --- Cleanup ---
+    if (client) {
+        console.log('\nCleaning up test data...');
+        // This now works because testEmail is in scope.
+        await client.query('DELETE FROM users WHERE email = $1', [testEmail]);
+        console.log('Test data cleaned up.');
+        
+        // Release the client back to the pool
+        client.release();
+        console.log('\nConnection released.');
+    }
+    
+    // Close all connections in the pool
+    await pool.end();
+    console.log('Pool has ended.');
+  }
+})();
