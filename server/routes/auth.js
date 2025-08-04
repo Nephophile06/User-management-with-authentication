@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
-const { pool } = require('../database-sqlite');
+const { pool } = require('../database');
 
 const router = express.Router();
 
@@ -22,7 +22,7 @@ router.post('/register', [
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
-      'INSERT INTO users (name, email, password) VALUES (?, ?, ?) RETURNING id, name, email, status, registration_time',
+      'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email, status, registration_time',
       [name, email, hashedPassword]
     );
 
@@ -49,7 +49,7 @@ router.post('/register', [
   } catch (error) {
     console.error('Registration error:', error);
     
-    if (error.message && error.message.includes('UNIQUE constraint failed')) {
+    if (error.message && error.message.includes('duplicate key value violates unique constraint')) {
       return res.status(400).json({ message: 'Email already exists' });
     }
     
@@ -70,7 +70,7 @@ router.post('/login', [
     const { email, password } = req.body;
 
     const result = await pool.query(
-      'SELECT * FROM users WHERE email = ?',
+      'SELECT * FROM users WHERE email = $1',
       [email]
     );
 
@@ -90,7 +90,7 @@ router.post('/login', [
     }
 
     await pool.query(
-      'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?',
+      'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1',
       [user.id]
     );
 

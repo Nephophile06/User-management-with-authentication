@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { pool } = require('../database-sqlite');
+const { pool } = require('../database');
 
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -13,7 +13,7 @@ const authenticateToken = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
     
     const result = await pool.query(
-      'SELECT id, email, name, status FROM users WHERE id = ?',
+      'SELECT id, email, name, status FROM users WHERE id = $1',
       [decoded.userId]
     );
 

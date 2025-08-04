@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-const { initializeDatabase } = require('./database-sqlite');
+const { initializeDatabase } = require('./database');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
 

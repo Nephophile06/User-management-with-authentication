@@ -1,5 +1,5 @@
 const express = require('express');
-const { pool } = require('../database-sqlite');
+const { pool } = require('../database');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
@@ -30,9 +30,9 @@ router.patch('/block', authenticateToken, async (req, res) => {
       return res.status(400).json({ message: 'User IDs array is required' });
     }
 
-    const placeholders = userIds.map(() => '?').join(',');
+    const placeholders = userIds.map((_, index) => `$${index + 2}`).join(',');
     const result = await pool.query(
-      `UPDATE users SET status = ? WHERE id IN (${placeholders}) RETURNING id, name, email, status`,
+      `UPDATE users SET status = $1 WHERE id IN (${placeholders}) RETURNING id, name, email, status`,
       ['blocked', ...userIds]
     );
 
@@ -55,9 +55,9 @@ router.patch('/unblock', authenticateToken, async (req, res) => {
       return res.status(400).json({ message: 'User IDs array is required' });
     }
 
-    const placeholders = userIds.map(() => '?').join(',');
+    const placeholders = userIds.map((_, index) => `$${index + 2}`).join(',');
     const result = await pool.query(
-      `UPDATE users SET status = ? WHERE id IN (${placeholders}) RETURNING id, name, email, status`,
+      `UPDATE users SET status = $1 WHERE id IN (${placeholders}) RETURNING id, name, email, status`,
       ['active', ...userIds]
     );
 
@@ -80,7 +80,7 @@ router.delete('/delete', authenticateToken, async (req, res) => {
       return res.status(400).json({ message: 'User IDs array is required' });
     }
 
-    const placeholders = userIds.map(() => '?').join(',');
+    const placeholders = userIds.map((_, index) => `$${index + 1}`).join(',');
     const usersToDelete = await pool.query(
       `SELECT id, name, email FROM users WHERE id IN (${placeholders})`,
       [...userIds]
